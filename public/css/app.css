@@ -11268,3 +11268,23 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+.auth-form {
+  max-width: 500px;
+  margin: 0 auto;
+}
+.auth-form .form-title {
+  text-align: center;
+  color: #ddd;
+  border-bottom: 2px solid #ddd;
+  margin-bottom: 30px;
+}
+.auth-form .opposite-action {
+  line-height: 1rem;
+  font-size: 1rem;
+}
+.auth-form .opposite-action a {
+  font-size: inherit;
+  text-decoration: none;
+  border: none;
+  line-height: 1rem;
+}

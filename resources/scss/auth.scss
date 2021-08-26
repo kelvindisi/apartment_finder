@@ -1,0 +1,20 @@
+.auth-form {
+    max-width: 500px;
+    margin: 0 auto;
+    .form-title {
+        text-align: center;
+        color: #ddd;
+        border-bottom: 2px solid #ddd;
+        margin-bottom: 30px;
+    }
+    .opposite-action {
+        line-height: 1rem;
+        font-size: 1rem;
+        a {
+            font-size: inherit;
+            text-decoration: none;
+            border: none;
+            line-height: 1rem;
+        }
+    }
+}
