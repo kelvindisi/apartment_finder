@@ -46,7 +46,7 @@
                                 @foreach($room->pictures as $image)
                                 <tr>
                                     <td>
-                                        <img src="{{asset('storage/'.$image->picture_file)}}"
+                                        <img src="{{asset('storage/thumbs/'.$image->picture_file)}}"
                                          alt="{{$room->apartment->name}}">
                                     </td>
                                     <td>

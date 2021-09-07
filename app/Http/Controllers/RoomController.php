@@ -72,8 +72,9 @@ class RoomController extends Controller
 
     private function updloadHouseImage($request) {
         $path = $request->file("image")->store("houses", "public");
+        $thumbPath = $request->file("image")->store("thumbs/houses", "public");
         $this->resizeImage($path);
-        $this->createThumbnail($path);
+        $this->createThumbnail($thumbPath);
         return $path;
     }
     private function resizeImage($path) {
