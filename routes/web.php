@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\LandlordController;
+use App\Http\Controllers\ApartmentController;
+use App\Http\Controllers\RoomController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,8 +25,16 @@ Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('regi
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 
 // Admin Routes
-
-
+Route::group(['prefix' => 'admin/'], function() {
+    Route::resource("admins", AdminController::class);
+    Route::resource("landlords", LandlordController::class);
+});
 // Landlord Routes
-
+Route::group(['prefix' => 'landlord/'], function() {
+    Route::resource("apartments", ApartmentController::class);
+    Route::resource("{id}/rooms", RoomController::class);
+});
 // Client Routes
+Route::group(['prefix' => 'user/'], function() {
+    
+});
