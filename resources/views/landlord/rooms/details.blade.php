@@ -4,7 +4,9 @@
 @endsection
 @section('content')
 <div class="container">
+    @include('landlord.rooms.image_modal')
     <div class="shadow mt-2 p-4">
+        include('layouts.messages')  
         <div class="form-title">
             <h2>ROOM DETAILS</h2>
             <hr>
@@ -33,6 +35,11 @@
                     <span>{{$room->description}}</span>
                 </div>
                 <hr>
+                <div class="col-12 mb-2">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addImage">
+                    Add Image
+                    </button>
+                </div>
                 <div class="col-12 mt-2">
                     <div class="table-responsive">
                         <table class="table table-striped dt-table">
@@ -60,7 +67,6 @@
                 </div>
             </div>
         </div>
-        @include('layouts.messages')  
     </div>
 </div>
 @endsection

@@ -34,6 +34,13 @@ class RoomController extends Controller
         return view('landlord.rooms.create', ['apartment' => $apartment]);
     }
 
+    /* Check logged user if is the owener of apartment */
+    private function validateOwnership($apartment) {
+        $apartment = $apartment->first();
+        $owner = $apartment->user()->first()->id;
+        if ($owner != Auth::user()->id)
+            return redirect(route("apartments.index"))->with("error", "Not allowed");
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -42,11 +49,7 @@ class RoomController extends Controller
      */
     public function store(Apartment $apartment, Request $request)
     {
-        // room_no, bedrooms, bathrooms, image, description
-        $apartment = $apartment->first();
-        $owner = $apartment->user()->first()->id;
-        if ($owner != Auth::user()->id)
-            return redirect(route("apartments.index"))->with("error", "Not allowed");
+        $this->validateOwnership();
         $values = $request->validate([
             'room_no' => 'required|numeric|min:0',
             'bedrooms' => 'required|numeric|min:0',
@@ -63,13 +66,23 @@ class RoomController extends Controller
         $house = $apartment->houses()->create($values);
         //if house created save uploaded picture to house pictures table
         if ($house){
-            $house->pictures()->create(['picture_file' => $updloadedImage]);
-            return redirect(route("rooms.show", ['id' => $apartment->id, 'room'=> $house->id]))
-            ->with("success", "Added room details successfully.");
+            $this->houseImageUploaded($house, $apartment->id, $updloadedImage);
         }
         return redirect()->back()->withInput($values)->with("error", "Failed to save new room(house) record.");
     }
-
+    /* 
+        Called when image has been uploaded 
+        Saves to the database (house pictures table)
+    */
+    private function houseImageUploaded(House $house, $apartment_id, $updloadedImage)
+    {
+        $house->pictures()->create(['picture_file' => $updloadedImage]);
+        return redirect(route("rooms.show", ['id' => $apartment_id, 'room'=> $house->id]))
+            ->with("success", "Added room details successfully.");
+    }
+    /*
+        Should upload and return the path of file
+    */
     private function updloadHouseImage($request) {
         $path = $request->file("image")->store("houses", "public");
         $thumbPath = $request->file("image")->store("thumbs/houses", "public");
@@ -82,11 +95,45 @@ class RoomController extends Controller
         $img->resize(1200, 600);
         $img->save();
     }
+    /*
+        Should udate database and redirect user
+    */
+    public function userUploadImage($apartment_id, $room_id, Request $request)
+    {
+        $apartment = Apartment::where(["id" => $apartment_id])->first();
+        $this->validateApartment($apartment);
+        $this->validateOwnership($apartment);
+
+        $house = $apartment->houses()->where(["id" => $room_id])->first();
+        $this->validateHouse($house);
+        
+        $request->validate([
+            'image' => 'required|image'
+        ]);
+        $updloadedImage = $this->updloadHouseImage($request);
+        return $this->houseImageUploaded($house, $apartment_id, $updloadedImage);
+    }
     private function createThumbnail($path) {
         $img = Image::make("storage/".$path);
         $filePath = public_path("storage");
-        $img->resize(110, 110);
+        $img->resize(110, 110, function($const) {
+            $const->aspectRatio();
+        });
         $img->save($filePath.'/'.$path);
+    }
+    private function roomRedirector($message)
+    {
+        return redirect(route("apartments.index"))->with("error", $message);
+    }
+    private function validateHouse($house)
+    {
+        if ($house == null)
+            $this->roomRedirector("House you wan't to upload pictures for is not available.");
+    }
+    private function validateApartment($apartment)
+    {
+        if ($apartment == null)
+            $this->roomRedirector("Apartment you wan't to upload pictures for is not available.");
     }
 
     /**
@@ -111,9 +158,10 @@ class RoomController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(House $house)
     {
-        //
+        $house = $house->first();
+        return view("landlord.rooms.update",["room" => $house]);
     }
 
     /**
@@ -123,11 +171,41 @@ class RoomController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Apartment $id, House $room)
     {
-        //
+        $apartment = $id;
+        if ($apartment->id != $room->apartment->id)
+            return redirect(route("aparment.show", $apartment->id))
+            ->with("error", "Failed because of invalid update.");
+        $input = $request->validate([
+            'room_no' => 'required|numeric|min:0',
+            'bedrooms' => 'required|numeric|min:0',
+            'bathrooms' => 'required|numeric|min:0',
+            'description' => 'required'
+        ]);
+        $params = [$apartment->id, $room->id];
+        if (!$this->checkRoomValidity($room, $input["room_no"]))
+            return redirect(route("rooms.edit", $params))
+                ->withInput($input)->with("error", "House with same room number exists.");
+        if ($room->update($input))
+            return redirect(route("rooms.show", $params))->with("success", "Updated details successfully.");
+        return redirect(route("rooms.edit", $params))
+            ->withInput($input)->with("error", "Unable to update details.");
     }
+    public function checkRoomValidity(House $room, $roomNo)
+    {
+        $fetchedRoom = House::where(["room_no" => $roomNo])->first();
+        if ($fetchedRoom != null)
+        {
+            if ($fetchedRoom->id != $room->id)
+                return false;
+        }
 
+        return true;
+    }
+    public function deleteImage($id){
+
+    }
     /**
      * Remove the specified resource from storage.
      *

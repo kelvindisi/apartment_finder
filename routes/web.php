@@ -33,6 +33,8 @@ Route::group(['prefix' => 'admin/'], function() {
 Route::group(['prefix' => 'landlord/'], function() {
     Route::resource("apartments", ApartmentController::class);
     Route::resource("{id}/rooms", RoomController::class);
+    Route::post("{apartment}/rooms/{room}/upload", 
+        [RoomController::class, "userUploadImage"])->name("rooms.upload");
 });
 // Client Routes
 Route::group(['prefix' => 'user/'], function() {
