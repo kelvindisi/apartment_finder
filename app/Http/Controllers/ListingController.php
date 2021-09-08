@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\House;
 use App\Models\Booking;
+
 
 class ListingController extends Controller
 {
@@ -43,5 +45,14 @@ class ListingController extends Controller
         if ($booking->user_id != Auth::user()->id)
             return redirect(route("bookings"))->with('error', "Action not allowed.");
         return view("users.schedules.details", ["booking" => $booking]);
+    }
+    public function search(Request $request) {
+        $q = strtoupper($request->query('q'));
+        $searched = DB::table("houses")
+            ->join("apartments", "apartments.id", "=", "houses.apartment_id")
+            ->select("houses.id")
+            ->where('apartments.location', 'LIKE', '%'.$q.'%')->pluck('id');
+        $houses = House::whereIn("id", $searched)->paginate(12);
+        return view("users.posts.index", ["rooms" => $houses]);
     }
 }

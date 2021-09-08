@@ -78,5 +78,6 @@ Route::group(['middleware' => 'auth'], function(){
         Route::post("/room/{room}", [ListingController::class, "book"])->name('appointment.book');
         Route::get("/bookings", [ListingController::class, "bookings"])->name("bookings");
         Route::get("/bookings/{booking}", [ListingController::class, "booking_show"])->name("booking.show");
+        Route::get("/search/", [ListingController::class, "search"])->name("room.search");
     });
 });

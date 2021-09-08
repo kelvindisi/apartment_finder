@@ -100,6 +100,7 @@ class ApartmentController extends Controller
             'email' => 'required|email',
             'description' => 'required'
         ]);
+        $input['location'] = strtoupper($inpu['location']);
         $apartment = Auth::user()->apartments()->where(['id'=>$id])->first();
         if ($apartment->update($input))
             return redirect(route('apartments.index'))->with('success', 'Updated successfully.');

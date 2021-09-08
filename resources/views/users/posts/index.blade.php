@@ -5,7 +5,7 @@
 @section('content')
 <div class="cover">
     <div class="search-form">
-        <form action="" method="get">
+        <form action="{{route('room.search')}}" method="get">
             <div class="row height d-flex justify-content-center align-items-center">
                 <div class="col-md-8">
                     <div class="search"> 
