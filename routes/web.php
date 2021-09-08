@@ -7,6 +7,7 @@ use App\Http\Controllers\LandlordController;
 use App\Http\Controllers\ApartmentController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\ListingController;
+use App\Http\Controllers\AppointmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +67,9 @@ Route::group(['middleware' => 'auth'], function(){
         Route::delete("{room}/{id}/picture/delete", 
             [RoomController::class, "deleteImage"])->name("room.pic.delete");
         Route::get("/appointments", [AppointmentController::class, "index"])->name("appointments");
+        Route::get("/appointments/{booking}/", [AppointmentController::class, "show"])->name("appointment.show");
+        Route::post("/appointmemts/process/{booking}", [AppointmentController::class, "schedule"])->name("appointment.schedule");
+        Route::get("/appointments/process/{booking}", [AppointmentController::class, "denieVisit"])->name("appointment.deny");
     });
     // Client Routes
     Route::group(['prefix' => 'user/'], function() {
