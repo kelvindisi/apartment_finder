@@ -79,5 +79,6 @@ Route::group(['middleware' => 'auth'], function(){
         Route::get("/bookings", [ListingController::class, "bookings"])->name("bookings");
         Route::get("/bookings/{booking}", [ListingController::class, "booking_show"])->name("booking.show");
         Route::get("/search/", [ListingController::class, "search"])->name("room.search");
+        Route::post("/comment/{booking}",[AppointmentController::class, "comment"])->name("comment.create");
     });
 });

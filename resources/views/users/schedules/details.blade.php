@@ -76,9 +76,34 @@
                         <span>{{ $booking->confirmed }}</span>
                     </div>
                 </div>
+                <div class="row mt-3">
+                    <form action="{{route('comment.create', $booking->id)}}" method="post">
+                        @csrf
+                        <div class="form-group">
+                            <label for="rating" class="form-label">Rating</label>
+                            <input type="number" name="rating" id="rating" 
+                            class="form-control @error('rating') is-invalid @enderror" min="0" max="10">
+                            @error('rating')
+                            <small class="invalid-feedback">{{$message}}</small>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="review" class="form-label">Review</label>
+                            <textarea name="review" id="review" cols="30" rows="10" 
+                            class="form-control @error('review') is-invalid @enderror"></textarea>
+                            @error('review')
+                            <small class="invalid-feedback">{{$message}}</small>
+                            @enderror
+                        </div>
+                        <div class="form-group mt-2">
+                            <button class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+    @include('users.posts.mycomments')
 </div>
 <div class="footer-image">
     <img src="{{asset('images/home/bottom.svg')}}" alt="houses svg">
