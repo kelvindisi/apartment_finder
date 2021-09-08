@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
+    public function _construct() {
+        dd('constructor');
+    }
     /**
      * Display a listing of the resource.
      *

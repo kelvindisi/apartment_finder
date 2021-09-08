@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Models\House;
+use App\Models\HousePicture;
 use App\Models\Apartment;
 use Image;
 
@@ -47,9 +49,10 @@ class RoomController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Apartment $apartment, Request $request)
+    public function store(Apartment $apartments, Request $request)
     {
-        $this->validateOwnership();
+        $apartment = $apartments->first();
+        $this->validateOwnership($apartment);
         $values = $request->validate([
             'room_no' => 'required|numeric|min:0',
             'bedrooms' => 'required|numeric|min:0',
@@ -66,7 +69,7 @@ class RoomController extends Controller
         $house = $apartment->houses()->create($values);
         //if house created save uploaded picture to house pictures table
         if ($house){
-            $this->houseImageUploaded($house, $apartment->id, $updloadedImage);
+            return $this->houseImageUploaded($house, $apartment->id, $updloadedImage);
         }
         return redirect()->back()->withInput($values)->with("error", "Failed to save new room(house) record.");
     }
@@ -203,8 +206,20 @@ class RoomController extends Controller
 
         return true;
     }
-    public function deleteImage($id){
+    public function deleteImage(House $room, $id){
+        $image = $room->pictures()->where(['id' => $id])->first();
+        $params = ['id' => $room->apartment->id, 'room' => $room->id];
+        if($image == null)
+            return redirect(route("rooms.show", $params))->with("info", "Seems can't find the image.");
+        $picture_file = $image->picture_file;
+        $room = $image->house;
+        $apartment = $room->apartment;
+        $this->validateOwnership($image->house->apartment);
+        Storage::delete([$image->picture_file, 'thumbs/'.$picture_file]);
+        $image->delete();
 
+        return redirect(route("rooms.show", $params))
+            ->with("success", "Deleted image successfully.");
     }
     /**
      * Remove the specified resource from storage.

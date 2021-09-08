@@ -21,4 +21,7 @@ class House extends Model
     public function reviews() {
         return $this->hasMany(Reviews::class);
     }
+    public function bookings() {
+        return $this->hasMany(Booking::class);
+    }
 }

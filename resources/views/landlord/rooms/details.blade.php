@@ -6,7 +6,7 @@
 <div class="container">
     @include('landlord.rooms.image_modal')
     <div class="shadow mt-2 p-4">
-        include('layouts.messages')  
+        @include('layouts.messages')  
         <div class="form-title">
             <h2>ROOM DETAILS</h2>
             <hr>
@@ -57,7 +57,11 @@
                                          alt="{{$room->apartment->name}}">
                                     </td>
                                     <td>
-                                        <a href="" class="btn btn-sm btn-danger">Delete</a>
+                                        <form action="{{route('room.pic.delete', [$room->id, $image->id])}}" method="post">
+                                            @csrf
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <button class="btn btn sm btn-danger">Delete</button>
+                                        </form>
                                     </td>
                                 </tr>
                                 @endforeach

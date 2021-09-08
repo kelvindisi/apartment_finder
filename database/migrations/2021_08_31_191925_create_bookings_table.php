@@ -17,12 +17,13 @@ class CreateBookingsTable extends Migration
             $confirmed = ["pending", "rejected", "confirmed"];
             $table->id();
             $table->unsignedBigInteger("house_id");
-            $table->date("requested_date");
-            $table->date("scheduled_date");
-            $table->enum("client_confirmed", $confirmed);
-            $table->enum("landlord_confirmed", $confirmed);
+            $table->unsignedBigInteger("user_id");
+            $table->date("scheduled_date")->nullable();
+            $table->enum("confirmed", $confirmed)->default("pending");
             $table->foreign("house_id")->references("id")
                 ->on("houses")->onDelete("CASCADE");
+            $table->foreign("user_id")->references("id")
+                ->on("users")->onDelete("CASCADE");
             $table->timestamps();
         });
     }

@@ -26,7 +26,7 @@ class AuthController extends Controller
         
         if (Auth::attempt($input)) {
             $request->session()->regenerate();
-            return redirect()->intended(route('main'));
+            return redirect()->intended(route('home'));
         }
         return redirect()->back()->with('error', 'Wrong username or password');
     }

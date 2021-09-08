@@ -13,6 +13,7 @@ class CreateReviewsTable extends Migration
      */
     public function up()
     {
+        // booking_id, rating, review
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("booking_id")->unique();
