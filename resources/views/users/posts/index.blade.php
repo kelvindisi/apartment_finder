@@ -22,6 +22,7 @@
 <!-- House Listing -->
 <div class="container mt-2">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @if($rooms->count() != 0)
         @foreach($rooms as $room)
         <div class="col">
             <div class="card">
@@ -40,6 +41,15 @@
             </div>
         </div>
         @endforeach
+        @else
+        <div class="container">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title">No house available.</h5>
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
     {{ $rooms->links() }}
 </div>

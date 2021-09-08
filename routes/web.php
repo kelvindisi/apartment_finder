@@ -65,6 +65,7 @@ Route::group(['middleware' => 'auth'], function(){
             [RoomController::class, "userUploadImage"])->name("rooms.upload");
         Route::delete("{room}/{id}/picture/delete", 
             [RoomController::class, "deleteImage"])->name("room.pic.delete");
+        Route::get("/appointments", [AppointmentController::class, "index"])->name("appointments");
     });
     // Client Routes
     Route::group(['prefix' => 'user/'], function() {
