@@ -17,20 +17,21 @@ class ListingController extends Controller
         $houses = House::where(['status' => 'vacant'])->paginate(12);
         return view("users.posts.index", ["rooms" => $houses]);
     }
-    private function getReviews($room_no) {
+    private function getReviews($house_id) {
         $reviews_ids = DB::table("reviews")
             ->SELECT("reviews.id")
             ->join('bookings', 'bookings.id', '=', 'reviews.booking_id')
             ->join('houses', 'houses.id', '=', 'bookings.house_id')
+            ->where('houses.id', '=', $house_id)
             ->pluck('id');
         $reviews = Reviews::whereIn("id", $reviews_ids)->get();
 
         return $reviews;
     }
-    public function show(House $room)
+    public function show(House $house)
     {
-        $reviews = $this->getReviews($room);
-        return view("users.posts.details", ["room" => $room, 'reviews' => $reviews]);
+        $reviews = $this->getReviews($house->id);
+        return view("users.posts.details", ["room" => $house, 'reviews' => $reviews]);
     }
     public function book(Request $request, House $room)
     {

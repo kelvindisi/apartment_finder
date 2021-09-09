@@ -11,11 +11,13 @@ class AppointmentController extends Controller
 {
     public function index()
     {
+        $user_id = Auth::user()->id;
         $bookings = DB::table("users")
             ->select('bookings.*', 'users.email', 'users.name', 'apartments.id as apartment_id', 'houses.id as house_id')
             ->join('bookings', 'bookings.user_id', '=', 'users.id')
             ->join('houses', 'houses.id', '=', 'bookings.house_id')
             ->join('apartments', 'apartments.id', '=', 'houses.apartment_id')
+            ->where('apartments.user_id', '=', $user_id)
             ->get();
         return view('landlord.schedules.index', ['bookings' => $bookings]);
     }
