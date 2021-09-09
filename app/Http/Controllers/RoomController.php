@@ -38,8 +38,8 @@ class RoomController extends Controller
 
     /* Check logged user if is the owener of apartment */
     private function validateOwnership($apartment) {
-        $apartment = $apartment->first();
-        $owner = $apartment->user()->first()->id;
+        // dd($apartment->user);
+        $owner = $apartment->user->id;
         if ($owner != Auth::user()->id)
             return redirect(route("apartments.index"))->with("error", "Not allowed");
     }
@@ -49,9 +49,9 @@ class RoomController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Apartment $apartments, Request $request)
+    public function store($id, Request $request)
     {
-        $apartment = $apartments->first();
+        $apartment = Apartment::where(['id'=> $id])->first();
         $this->validateOwnership($apartment);
         $values = $request->validate([
             'room_no' => 'required|numeric|min:0',
@@ -60,10 +60,12 @@ class RoomController extends Controller
             'image' => 'required|image',
             'description' => 'required'
         ]);
-        $apartmentHasSameRoomNo = $apartment->houses()->where(["room_no" => $values["room_no"]])->first();
-        if ($apartmentHasSameRoomNo) {
-            return redirect()->back()->with("error", "Another room with same room no exists.");
+        
+        $apartmentHasSameRoomNo = $apartment->houses()->where(["room_no" => $values["room_no"]])->count();
+        if ($apartmentHasSameRoomNo > 0) {
+            return redirect()->back()->withInput($values)->with("error", "Another room with same room no exists.");
         }
+
         $updloadedImage = $this->updloadHouseImage($request);
         unset($values["image"]);
         $house = $apartment->houses()->create($values);

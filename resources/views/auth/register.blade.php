@@ -79,3 +79,21 @@
     </div>
 </div>
 @endsection
+@section('scripts')
+<style>
+    body {
+        background: url('/images/bg1.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    .auth-form {
+        background: black;
+        opacity: .8;
+        border-radius: 10px;
+    }
+    .auth-form label {
+        color: white;
+    }
+</style>
+@endsection

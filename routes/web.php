@@ -60,8 +60,11 @@ Route::group(['middleware' => 'auth'], function(){
         Route::get('', function() {
             return redirect(route('apartments.index'));
         });
+        //http://127.0.0.1:8000/landlord/2/rooms/create
         Route::resource("apartments", ApartmentController::class);
+
         Route::resource("{id}/rooms", RoomController::class);
+        
         Route::post("{apartment}/rooms/{room}/upload", 
             [RoomController::class, "userUploadImage"])->name("rooms.upload");
         Route::delete("{room}/{id}/picture/delete", 
@@ -74,7 +77,7 @@ Route::group(['middleware' => 'auth'], function(){
     // Client Routes
     Route::group(['prefix' => 'user/'], function() {
         Route::get("", [ListingController::class, "index"])->name("list.index");
-        Route::get("/room/{room}", [ListingController::class, "show"])->name('list.show');
+        Route::get("/room/{house}", [ListingController::class, "show"])->name('list.show');
         Route::post("/room/{room}", [ListingController::class, "book"])->name('appointment.book');
         Route::get("/bookings", [ListingController::class, "bookings"])->name("bookings");
         Route::get("/bookings/{booking}", [ListingController::class, "booking_show"])->name("booking.show");
